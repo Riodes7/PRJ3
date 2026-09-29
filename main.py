@@ -1231,130 +1231,130 @@
 
 
 # 1. Map individual raw subject marks (0-100) to KNEC Grade & Points (1-12)
-def get_subject_points(mark):
-    if mark >= 80:
-        return "A", 12
-    elif mark >= 75:
-        return "A-", 11
-    elif mark >= 70:
-        return "B+", 10
-    elif mark >= 65:
-        return "B", 9
-    elif mark >= 60:
-        return "B-", 8
-    elif mark >= 55:
-        return "C+", 7
-    elif mark >= 50:
-        return "C", 6
-    elif mark >= 45:
-        return "C-", 5
-    elif mark >= 40:
-        return "D+", 4
-    elif mark >= 35:
-        return "D", 3
-    elif mark >= 30:
-        return "D-", 2
-    else:
-        return "E", 1
+# def get_subject_points(mark):
+#     if mark >= 80:
+#         return "A", 12
+#     elif mark >= 75:
+#         return "A-", 11
+#     elif mark >= 70:
+#         return "B+", 10
+#     elif mark >= 65:
+#         return "B", 9
+#     elif mark >= 60:
+#         return "B-", 8
+#     elif mark >= 55:
+#         return "C+", 7
+#     elif mark >= 50:
+#         return "C", 6
+#     elif mark >= 45:
+#         return "C-", 5
+#     elif mark >= 40:
+#         return "D+", 4
+#     elif mark >= 35:
+#         return "D", 3
+#     elif mark >= 30:
+#         return "D-", 2
+#     else:
+#         return "E", 1
 
 
-# 2. Map the 7-subject average points (1.0 - 12.0) to the Mean Grade
-def get_mean_grade(mean_points):
-    rounded_points = round(mean_points)
-    grade_table = {
-        12: ("A", "Excellent!"),
-        11: ("A-", "Very Good!"),
-        10: ("B+", "Good!"),
-        9: ("B", "Above Average!"),
-        8: ("B-", "Average Plus!"),
-        7: ("C+", "Average (Direct University Degree Entry Qualifiers)!"),
-        6: ("C", "Satisfactory (Diploma Entry)!"),
-        5: ("C-", "Below Average (Diploma Entry)!"),
-        4: ("D+", "Weak (Certificate Entry)!"),
-        3: ("D", "Poor (Certificate Entry)!"),
-        2: ("D-", "Very Poor (Artisan Entry)!"),
-        1: ("E", "Fail (Artisan Entry)!"),
-    }
-    return grade_table.get(rounded_points, ("E", "Fail"))
+# # 2. Map the 7-subject average points (1.0 - 12.0) to the Mean Grade
+# def get_mean_grade(mean_points):
+#     rounded_points = round(mean_points)
+#     grade_table = {
+#         12: ("A", "Excellent!"),
+#         11: ("A-", "Very Good!"),
+#         10: ("B+", "Good!"),
+#         9: ("B", "Above Average!"),
+#         8: ("B-", "Average Plus!"),
+#         7: ("C+", "Average (Direct University Degree Entry Qualifiers)!"),
+#         6: ("C", "Satisfactory (Diploma Entry)!"),
+#         5: ("C-", "Below Average (Diploma Entry)!"),
+#         4: ("D+", "Weak (Certificate Entry)!"),
+#         3: ("D", "Poor (Certificate Entry)!"),
+#         2: ("D-", "Very Poor (Artisan Entry)!"),
+#         1: ("E", "Fail (Artisan Entry)!"),
+#     }
+#     return grade_table.get(rounded_points, ("E", "Fail"))
 
 
-# 3. Main processing routine
-def calculate_kcse():
-    subjects = [
-        "Maths",
-        "English",
-        "Kiswahili",
-        "Physics",
-        "Biology",
-        "Chemistry",
-        "Geography",
-        "Building and Construction",
-    ]
+# # 3. Main processing routine
+# def calculate_kcse():
+#     subjects = [
+#         "Maths",
+#         "English",
+#         "Kiswahili",
+#         "Physics",
+#         "Biology",
+#         "Chemistry",
+#         "Geography",
+#         "Building and Construction",
+#     ]
 
-    scores = {}
+#     scores = {}
 
-    # Input validation loop for each subject
-    for subject in subjects:
-        while True:
-            try:
-                mark = float(input(f"Enter the marks for {subject} (0-100): "))
-                if 0 <= mark <= 100:
-                    grade, points = get_subject_points(mark)
-                    scores[subject] = {"mark": mark, "grade": grade, "points": points}
-                    break
-                else:
-                    print("Error: Marks must be between 0 and 100. Try again.")
-            except ValueError:
-                print("Error: Please enter a valid numerical value.")
+#     # Input validation loop for each subject
+#     for subject in subjects:
+#         while True:
+#             try:
+#                 mark = float(input(f"Enter the marks for {subject} (0-100): "))
+#                 if 0 <= mark <= 100:
+#                     grade, points = get_subject_points(mark)
+#                     scores[subject] = {"mark": mark, "grade": grade, "points": points}
+#                     break
+#                 else:
+#                     print("Error: Marks must be between 0 and 100. Try again.")
+#             except ValueError:
+#                 print("Error: Please enter a valid numerical value.")
 
-    # Apply KNEC 7-Subject Selection Rules:
-    # Rule 1: Maths is compulsory
-    maths_pts = scores["Maths"]["points"]
+#     # Apply KNEC 7-Subject Selection Rules:
+#     # Rule 1: Maths is compulsory
+#     maths_pts = scores["Maths"]["points"]
 
-    # Rule 2: Best of English or Kiswahili
-    eng_pts = scores["English"]["points"]
-    kis_pts = scores["Kiswahili"]["points"]
-    best_lang_pts = max(eng_pts, kis_pts)
-    dropped_lang_pts = min(eng_pts, kis_pts)
+#     # Rule 2: Best of English or Kiswahili
+#     eng_pts = scores["English"]["points"]
+#     kis_pts = scores["Kiswahili"]["points"]
+#     best_lang_pts = max(eng_pts, kis_pts)
+#     dropped_lang_pts = min(eng_pts, kis_pts)
 
-    # Rule 3: 5 next best subjects from all remaining subjects
-    # The pool includes: Sciences, Humanities, Technicals, AND the unselected language
-    other_points = [
-        scores["Physics"]["points"],
-        scores["Biology"]["points"],
-        scores["Chemistry"]["points"],
-        scores["Geography"]["points"],
-        scores["Building and Construction"]["points"],
-        dropped_lang_pts,
-    ]
+#     # Rule 3: 5 next best subjects from all remaining subjects
+#     # The pool includes: Sciences, Humanities, Technicals, AND the unselected language
+#     other_points = [
+#         scores["Physics"]["points"],
+#         scores["Biology"]["points"],
+#         scores["Chemistry"]["points"],
+#         scores["Geography"]["points"],
+#         scores["Building and Construction"]["points"],
+#         dropped_lang_pts,
+#     ]
 
-    # Sort descending and take top 5
-    other_points.sort(reverse=True)
-    top_5_other_pts = other_points[:5]
+#     # Sort descending and take top 5
+#     other_points.sort(reverse=True)
+#     top_5_other_pts = other_points[:5]
 
-    # Calculate Aggregate (out of 84) and Mean Points (out of 12)
-    selected_7_points = [maths_pts, best_lang_pts] + top_5_other_pts
-    aggregate_points = sum(selected_7_points)
-    mean_points = aggregate_points / 7.0
+#     # Calculate Aggregate (out of 84) and Mean Points (out of 12)
+#     selected_7_points = [maths_pts, best_lang_pts] + top_5_other_pts
+#     aggregate_points = sum(selected_7_points)
+#     mean_points = aggregate_points / 7.0
 
-    mean_grade, remark = get_mean_grade(mean_points)
+#     mean_grade, remark = get_mean_grade(mean_points)
 
-    # Display Results
-    print("\n" + "=" * 45)
-    print(f"{'KCSE CANDIDATE PERFORMANCE SUMMARY':^45}")
-    print("=" * 45)
-    for subj, data in scores.items():
-        print(
-            f"{subj:<28}: {data['mark']:>5.1f}%  | Grade: {data['grade']:<2} ({data['points']} pts)"
-        )
+#     # Display Results
+#     print("\n" + "=" * 45)
+#     print(f"{'KCSE CANDIDATE PERFORMANCE SUMMARY':^45}")
+#     print("=" * 45)
+#     for subj, data in scores.items():
+#         print(
+#             f"{subj:<28}: {data['mark']:>5.1f}%  | Grade: {data['grade']:<2} ({data['points']} pts)"
+#         )
 
-    print("-" * 45)
-    print(f"Total Aggregate Points : {aggregate_points} / 84")
-    print(f"Mean Grade Points      : {mean_points:.2f} / 12.0")
-    print(f"Overall Mean Grade     : {mean_grade}")
-    print(f"Verdict                : {remark}")
-    print("=" * 45)
+#     print("-" * 45)
+#     print(f"Total Aggregate Points : {aggregate_points} / 84")
+#     print(f"Mean Grade Points      : {mean_points:.2f} / 12.0")
+#     print(f"Overall Mean Grade     : {mean_grade}")
+#     print(f"Verdict                : {remark}")
+#     print("=" * 45)
 
 
-if __name__ == "__main__":
-    calculate_kcse()
+# if __name__ == "__main__":
+#     calculate_kcse()
